@@ -11,7 +11,7 @@
 <button onclick="add()">اضافة</button>
 <p id="msg"></p>
 <script>
-const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','sb_publishable_EPvIHXuLhzyJ2l5yCPcKJw_oa10B1Q');
+const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
 async function add(){
  let {error}=await supa.from('movies').insert([{title:title.value, year:year.value, poster_url:poster.value, video_url:video.value, description:desc.value}]);
  msg.innerText= error ? 'خطأ: '+error.message : 'تمت الاضافة ✅ افتح index.html هتلاقيه';
