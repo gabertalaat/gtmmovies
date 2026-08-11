@@ -1,59 +1,38 @@
-<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>GTM Admin Pro V2</title>
+<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Admin - بدون بوكت</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>body{background:#0f0f0f;color:white;font-family:Arial;padding:15px}input,textarea{width:100%;padding:12px;margin:6px 0;background:#222;color:white;border:1px solid #333;border-radius:8px;box-sizing:border-box}button{padding:10px 15px;border:none;border-radius:8px;cursor:pointer}.btn-add{background:#e50914;color:white;width:100%;font-size:16px;padding:14px}.card{background:#1a1a1a;padding:12px;border-radius:10px;margin:10px 0;display:flex;gap:10px;align-items:center}.card img{width:60px;height:80px;object-fit:cover;border-radius:6px}.actions{margin-right:auto;display:flex;gap:5px}.del{background:#333;color:#ff4444}.edit{background:#333;color:#44ff44}</style>
+<style>body{background:#0f0f0f;color:#fff;font-family:Arial;padding:15px}input,textarea{width:100%;padding:12px;margin:6px 0;background:#222;color:#fff;border:1px solid #333;border-radius:8px;box-sizing:border-box}button{padding:12px;border:none;border-radius:8px;cursor:pointer}.btn-add{background:#e50914;color:#fff;width:100%;font-size:16px}.card{background:#1a1a1a;padding:12px;border-radius:10px;margin:10px 0;display:flex;gap:10px;align-items:center}img.thumb{width:60px;height:80px;object-fit:cover}</style>
 </head><body>
-<h2>لوحة تحكم GTM - يقبل اي لينك</h2>
+<h2>GTM - رفع من الجهاز بدون posters</h2>
 <input id="title" placeholder="اسم الفيلم"><input id="year" placeholder="السنة">
-<input id="poster" placeholder="حط اي رابط صورة (حتى لو من جوجل درايف)"><input id="video" placeholder="حط اي رابط مشاهدة (يوتيوب، شورتس، اي حاجة)">
-<textarea id="desc" placeholder="القصة"></textarea>
-<input type="hidden" id="editId">
-<button class="btn-add" id="mainBtn" onclick="save()">اضافة فيلم</button>
-<p id="msg"></p><hr><h3>كل الافلام</h3><div id="list"></div>
+<label>اختار صورة من جهازك (هتتحفظ لوحدها):</label><input type="file" id="file" accept="image/*">
+<input id="poster" type="hidden">
+<img id="preview" style="width:120px;display:none;margin:8px 0;border-radius:8px">
+<input id="video" placeholder="رابط المشاهدة"><textarea id="desc" placeholder="القصة"></textarea>
+<input type="hidden" id="editId"><button class="btn-add" onclick="save()">حفظ الفيلم</button><p id="msg"></p><hr><div id="list"></div>
 <script>
-const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
-
-function fixPoster(url){
-  if(!url) return url;
-  url=url.trim();
-  // لو جوجل درايف يحوله لرابط مباشر
-  if(url.includes('drive.google.com')){
-    let m=url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
-    if(m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
-  }
-  // لو share.google او اي لينك غريب هنقبله زي ما هو والموقع هيحاول يعرضه
-  return url;
+const supa=supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
+let base64Image="";
+file.addEventListener('change',()=>{
+ let f=file.files[0]; if(!f) return;
+ let reader=new FileReader();
+ reader.onload=e=>{ base64Image=e.target.result; poster.value=base64Image; preview.src=base64Image; preview.style.display='block'; };
+ reader.readAsDataURL(f);
+});
+async function save(){
+ if(!title.value) return msg.innerText='اكتب اسم الفيلم';
+ msg.innerText='جاري الحفظ...';
+ let payload={title:title.value,year:year.value,poster_url:poster.value||base64Image,video_url:video.value,watch_url:video.value,description:desc.value};
+ let res=editId.value?await supa.from('movies').update(payload).eq('id',editId.value):await supa.from('movies').insert([payload]);
+ msg.innerText=res.error?'خطأ: '+res.error.message:'تم ✅ الصورة اتحفظت من جهازك';
+ if(!res.error){ editId.value=''; title.value=year.value=video.value=desc.value=''; file.value=''; preview.style.display='none'; base64Image=''; load(); }
 }
-function fixVideo(url){
-  if(!url) return url;
-  url=url.trim();
-  // يحول شورتس للينك عادي
-  if(url.includes('/shorts/')){
-    url=url.replace('/shorts/','/watch?v=').split('?')[0] + '?v=' + url.split('/shorts/')[1].split(/[?&]/)[0];
-  }
-  return url;
-}
-
 async function load(){
  let {data}=await supa.from('movies').select('*').order('id',{ascending:false});
- list.innerHTML=data.map(m=>`
-  <div class="card">
-   <img src="${fixPoster(m.poster_url)}" onerror="this.src='https://via.placeholder.com/60x80?text=No+Image'">
-   <div><b>${m.title}</b></div>
-   <div class="actions">
-    <button class="edit" onclick="startEdit(${m.id}, \`${(m.title||'').replace(/`/g,'')}\`, \`${m.year||''}\`, \`${m.poster_url||''}\`, \`${m.video_url||m.watch_url||''}\`, \`${(m.description||'').replace(/`/g,'')}\`)">تعديل</button>
-    <button class="del" onclick="del(${m.id})">مسح</button>
-   </div>
-  </div>`).join('');
+ list.innerHTML=data.map(m=>`<div class="card"><img class="thumb" src="${m.poster_url}"><div><b>${m.title}</b></div><div style="margin-right:auto"><button onclick="del(${m.id})">مسح</button> <button onclick="startEdit(${m.id})">تعديل</button></div></div>`).join('');
+ window.allMovies=data;
 }
-async function save(){
- const rawPoster=poster.value; const rawVideo=video.value;
- const payload={title:title.value,year:year.value,poster_url:fixPoster(rawPoster),video_url:fixVideo(rawVideo),watch_url:fixVideo(rawVideo),description:desc.value};
- let res = editId.value? await supa.from('movies').update(payload).eq('id',editId.value) : await supa.from('movies').insert([payload]);
- msg.innerText=res.error?'خطأ: '+res.error.message:'تم ✅ اي لينك اتقبل واتحول';
- if(!res.error){ editId.value=''; mainBtn.innerText='اضافة فيلم'; title.value=year.value=poster.value=video.value=desc.value=''; load(); }
-}
-function startEdit(id,t,y,p,v,d){ editId.value=id; title.value=t; year.value=y; poster.value=p; video.value=v; desc.value=d; mainBtn.innerText='حفظ التعديل'; window.scrollTo(0,0); }
-async function del(id){ if(!confirm('تمسح؟')) return; await supa.from('movies').delete().eq('id',id); load(); }
+function startEdit(id){ let m=allMovies.find(x=>x.id==id); editId.value=m.id; title.value=m.title; year.value=m.year; video.value=m.video_url||m.watch_url; desc.value=m.description; poster.value=m.poster_url; preview.src=m.poster_url; preview.style.display='block'; base64Image=m.poster_url; window.scrollTo(0,0); }
+async function del(id){if(!confirm('تمسح؟'))return;await supa.from('movies').delete().eq('id',id);load();}
 load();
 </script>
 </body></html>
