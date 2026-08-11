@@ -8,7 +8,7 @@
 <h1>GTM MOVIES 🎬</h1>
 <div id="movies">جاري التحميل...</div>
 <script>
-const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','sb_publishable_EPvIHXuLhzyJ2l5yCPcKJw_oa10B1Q');
+const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
 async function load(){
  let {data}=await supa.from('movies').select('*').order('id',{ascending:false});
  document.getElementById('movies').innerHTML = data.map(m=>`
