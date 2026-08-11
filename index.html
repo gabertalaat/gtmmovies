@@ -6,10 +6,31 @@
 <div id="movies">جاري التحميل...</div>
 <script>
 const supa = supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
+
+function fixPoster(url){
+  if(!url) return 'https://via.placeholder.com/160x230?text=No+Image';
+  url=url.trim();
+  if(url.includes('drive.google.com')){
+    let m=url.match(/\/d\/([^\/]+)/) || url.match(/id=([^&]+)/);
+    if(m) return `https://drive.google.com/uc?export=view&id=${m[1]}`;
+  }
+  return url;
+}
+function fixVideo(url){
+  if(!url) return '#';
+  url=url.trim();
+  if(url.includes('/shorts/')){
+    let id=url.split('/shorts/')[1].split(/[?&]/)[0];
+    return `https://www.youtube.com/watch?v=${id}`;
+  }
+  return url;
+}
+
 async function load(){
- let {data}=await supa.from('movies').select('*').order('id',{ascending:false});
+ let {data, error}=await supa.from('movies').select('*').order('id',{ascending:false});
+ if(error){ document.getElementById('movies').innerHTML='خطأ: '+error.message; return; }
  document.getElementById('movies').innerHTML = data.map(m=>`
-  <div class="movie"><a href="${m.video_url||m.watch_url}" target="_blank"><img src="${m.poster_url}" onerror="this.src='https://via.placeholder.com/160x230'"><div class="info"><b>${m.title}</b><br><small>${m.year||''}</small></div></a></div>
+  <div class="movie"><a href="${fixVideo(m.video_url||m.watch_url)}" target="_blank"><img src="${fixPoster(m.poster_url)}" onerror="this.src='https://via.placeholder.com/160x230?text=No+Image'"><div class="info"><b>${m.title}</b><br><small>${m.year||''}</small></div></a></div>
  `).join('') || 'لسه مفيش افلام';
 }
 load();
