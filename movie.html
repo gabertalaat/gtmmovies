@@ -1,0 +1,22 @@
+<!DOCTYPE html><html dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>تفاصيل الفيلم</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>body{background:#111;color:#fff;font-family:Arial;padding:15px;max-width:600px;margin:auto} img{width:100%;max-height:500px;object-fit:cover;border-radius:15px} .btn{display:block;background:#e50914;color:#fff;text-align:center;padding:15px;border-radius:10px;text-decoration:none;font-size:18px;margin-top:15px} .back{color:#aaa;text-decoration:none;display:block;margin-bottom:15px}</style>
+</head><body>
+<a class="back" href="index.html">← رجوع</a>
+<div id="content">جاري التحميل...</div>
+<script>
+const supa=supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
+const id=new URLSearchParams(location.search).get('id');
+async function load(){
+ let {data,error}=await supa.from('movies').select('*').eq('id',id).single();
+ if(error||!data){ document.getElementById('content').innerHTML='الفيلم مش موجود'; return; }
+ document.getElementById('content').innerHTML=`
+  <img src="${data.poster_url}">
+  <h1>${data.title} ${data.year?`(${data.year})`:''}</h1>
+  <p>${data.description||'لا يوجد وصف'}</p>
+  <a class="btn" href="${data.video_url||data.watch_url}" target="_blank">▶️ مشاهدة الان</a>
+ `;
+}
+load();
+</script>
+</body></html>
