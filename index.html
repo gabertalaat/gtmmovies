@@ -1,80 +1,76 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GTM MOVIES</title>
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GTM MOVIES </title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
-body{background:#050507;color:#fff}
-header{position:fixed;top:0;width:100%;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 4%;background:rgba(0,0,0,.6);backdrop-filter:blur(15px);border-bottom:1px solid rgba(255,255,255,.07)}
-.logo{font-size:30px;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#e50914,#ff3d5a);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.search input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 18px;border-radius:30px;width:260px;outline:none;transition:.3s}
-.search input:focus{background:rgba(255,255,255,.14);width:300px}
-.hero{height:95vh;position:relative;display:flex;align-items:center;padding:0 5%;overflow:hidden}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center top;transform:scale(1.05)}
-.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#050507 15%,rgba(5,5,7,.6) 50%,transparent 85%),linear-gradient(0deg,#050507 10%,transparent 70%);z-index:1}
-.hero-content{position:relative;z-index:2;max-width:650px}
-.badge{display:inline-block;background:#e50914;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:800;margin-bottom:12px;letter-spacing:1px}
-.hero-content h1{font-size:64px;font-weight:900;line-height:.95;margin-bottom:14px;text-shadow:0 10px 30px rgba(0,0,0,.8)}
-.hero-content.meta{color:#aaa;margin-bottom:12px}
-.hero-content p{color:#c9c9c9;line-height:1.7;font-size:15px;margin-bottom:24px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.btns{display:flex;gap:12px}
-.btn{padding:14px 32px;border-radius:40px;font-weight:800;text-decoration:none;display:flex;align-items:center;gap:8px;transition:.3s}
-.btn-play{background:#fff;color:#000}.btn-play:hover{transform:scale(1.05);background:#e5e5e5}
-.btn-list{background:rgba(255,255,255,.15);color:#fff;backdrop-filter:blur(10px)}.btn-list:hover{background:rgba(255,255,255,.25)}
-.row{padding:12px 0 10px 0}
-.row h2{padding:0 4%;font-size:22px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-.row h2 span{color:#e50914}
-.slider{display:flex;gap:14px;overflow-x:auto;padding:10px 4% 20px;scrollbar-width:none}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',Arial}
+body{background:#000;color:#fff;overflow-x:hidden}
+header{position:fixed;top:0;width:100%;z-index:10;background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);padding:15px 4%;display:flex;justify-content:space-between;align-items:center}
+.logo{color:#e50914;font-size:28px;font-weight:900;letter-spacing:1px}
+.search input{background:#222;border:1px solid #444;color:#fff;padding:8px 15px;border-radius:20px;width:200px}
+.hero{position:relative;height:85vh;min-height:500px;display:flex;align-items:flex-end;padding:5% 4%;background:#111}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#000 0%,transparent 60%)}
+.hero-content{position:relative;z-index:2;max-width:600px}
+.hero-content h1{font-size:52px;font-weight:900;line-height:1.1;margin-bottom:15px;text-shadow:2px 2px 10px #000}
+.hero-content p{color:#ddd;line-height:1.6;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.btn-play{background:#fff;color:#000;padding:12px 30px;border-radius:6px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-left:10px}
+.btn-info{background:rgba(109,109,110,.7);color:#fff;padding:12px 30px;border-radius:6px;font-weight:700;text-decoration:none}
+.row{padding:20px 4%}
+.row h2{font-size:20px;margin-bottom:12px}
+.slider{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:10px}
 .slider::-webkit-scrollbar{display:none}
-.card{position:relative;min-width:200px;width:200px;height:300px;border-radius:16px;overflow:hidden;background:#111;cursor:pointer;transition:.4s cubic-bezier(.2,.8,.2,1);flex-shrink:0;border:1px solid rgba(255,255,255,.06)}
-.card img{width:100%;height:100%;object-fit:cover;transition:.5s}
-.card:hover{transform:translateY(-10px) scale(1.03);box-shadow:0 20px 40px rgba(229,9,20,.3);border-color:rgba(229,9,20,.5)}
-.card:hover img{transform:scale(1.1);filter:brightness(.5)}
-.card.overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.95) 0%,transparent 60%);opacity:0;transition:.3s;display:flex;flex-direction:column;justify-content:flex-end;padding:14px}
-.card:hover.overlay{opacity:1}
-.card.overlay b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card.num{position:absolute;top:-10px;right:-6px;font-size:80px;font-weight:900;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.15);line-height:1}
-.hero-dots{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:3}
-.dot{width:40px;height:4px;background:rgba(255,255,255,.2);border-radius:10px;transition:.3s;cursor:pointer}
-.dot.active{background:#e50914;width:60px}
+.card{min-width:170px;width:170px;background:#1a1a1a;border-radius:8px;overflow:hidden;transition:.3s;cursor:pointer;flex-shrink:0}
+.card:hover{transform:scale(1.08);z-index:3}
+.card img{width:100%;height:250px;object-fit:cover;display:block}
+.card.info{padding:8px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3}
+.dot{width:30px;height:4px;background:rgba(255,255,255,.4);border-radius:2px;cursor:pointer}
+.dot.active{background:#fff}
 </style>
 </head><body>
-<header><div class="logo">GTM MOVIES</div><div class="search"><input id="search" placeholder="ابحث عن فيلم..." oninput="doSearch()"></div></header>
-<div class="hero" id="hero"><div class="hero-bg" id="heroBg"></div><div class="hero-content" id="heroContent"></div><div class="hero-dots" id="dots"></div></div>
+<header><div class="logo">GTM MOVIES</div><div class="search"><input id="search" placeholder="بحث..." oninput="filter()"></div></header>
+
+<div class="hero" id="hero"><div class="hero-bg" id="heroBg"></div><div class="hero-content" id="heroContent">جاري التحميل...</div><div class="dots" id="dots"></div></div>
+
 <div id="rows"></div>
+
 <script>
 const supa=supabase.createClient('https://akkroydgqotbavvchiju.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFra3JveWRncW90YmF2dmNoaWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0MjY2MDcsImV4cCI6MjEwMjAwMjYwN30.lP10UuBAudqfOeoSpOkfHOXMR1Z24kY68CRNmKUcXpo');
-let allMovies=[],hero=[],hIdx=0,timer;
+let allMovies=[],heroMovies=[],heroIdx=0,heroTimer;
+
+function fixPoster(u){return u||'https://via.placeholder.com/500x750?text=No+Image'}
+
 async function load(){
  let {data}=await supa.from('movies').select('*').order('id',{ascending:false});
- allMovies=data||[]; hero=allMovies.slice(0,5);
- if(hero.length){ show(0); start(); }
- render(allMovies);
+ allMovies=data||[];
+ heroMovies=allMovies.slice(0,5);
+ if(heroMovies.length) showHero(0), startHero();
+ renderRows(allMovies);
 }
-function show(i){
- hIdx=i; let m=hero[i];
- document.getElementById('heroBg').style.backgroundImage=`url('${m.poster_url}')`;
+function showHero(i){
+ heroIdx=i; let m=heroMovies[i];
+ document.getElementById('heroBg').style.backgroundImage=`url('${fixPoster(m.poster_url)}')`;
  document.getElementById('heroContent').innerHTML=`
-  <div class="badge">TOP 5 • احدث الاضافات</div>
   <h1>${m.title}</h1>
-  <div class="meta">${m.year||2025} • HD • ${m.description?.slice(0,15)||'حصري'}</div>
-  <p>${m.description||'شاهد اقوى الافلام بجودة فائقة على GTM Movies.'}</p>
-  <div class="btns"><a class="btn btn-play" href="movie.html?id=${m.id}">▶ شاهد الان</a><a class="btn btn-list" href="movie.html?id=${m.id}">+ التفاصيل</a></div>
+  <p>${m.description||'شاهد الان على GTM Movies بجودة عالية.'}</p>
+  <a class="btn-play" href="movie.html?id=${m.id}">▶ تشغيل</a>
+  <a class="btn-info" href="movie.html?id=${m.id}">ⓘ تفاصيل</a>
  `;
- document.getElementById('dots').innerHTML=hero.map((_,k)=>`<div class="dot ${k==i?'active':''}" onclick="show(${k})"></div>`).join('');
+ document.getElementById('dots').innerHTML=heroMovies.map((_,k)=>`<div class="dot ${k==i?'active':''}" onclick="showHero(${k})"></div>`).join('');
 }
-function start(){ clearInterval(timer); timer=setInterval(()=>show((hIdx+1)%hero.length),5000); }
-function card(m,i){return `<div class="card" onclick="location.href='movie.html?id=${m.id}'"><div class="num">${i+1}</div><img src="${m.poster_url}" loading="lazy"><div class="overlay"><b>${m.title}</b><small>${m.year||''}</small></div></div>`}
-function render(list){
- let html=`<div class="row"><h2><span>#</span> TOP 10 اليوم في GTM</h2><div class="slider">${list.slice(0,10).map((m,i)=>card(m,i)).join('')}</div></div>`;
- html+=`<div class="row"><h2>🔥 <span>احدث</span> الاضافات</h2><div class="slider">${list.slice(0,15).map((m,i)=>card(m,i)).join('')}</div></div>`;
- html+=`<div class="row"><h2>🎬 <span>كل</span> المكتبة</h2><div class="slider" id="allRow" style="flex-wrap:wrap;overflow:visible">${list.map((m,i)=>card(m,i)).join('')}</div></div>`;
- document.getElementById('rows').innerHTML=html;
+function startHero(){ clearInterval(heroTimer); heroTimer=setInterval(()=>showHero((heroIdx+1)%heroMovies.length),4000); }
+
+function renderRows(movies){
+ let rowsHtml='';
+ rowsHtml+=`<div class="row"><h2>🔥 أحدث الإضافات</h2><div class="slider">${movies.slice(0,10).map(card).join('')}</div></div>`;
+ rowsHtml+=`<div class="row"><h2>🎬 كل الأفلام</h2><div class="slider" id="allRow">${movies.map(card).join('')}</div></div>`;
+ document.getElementById('rows').innerHTML=rowsHtml;
 }
-function doSearch(){
- let q=document.getElementById('search').value.toLowerCase();
+function card(m){return `<div class="card" onclick="location.href='movie.html?id=${m.id}'"><img src="${fixPoster(m.poster_url)}" loading="lazy"><div class="info">${m.title}</div></div>`}
+function filter(){
+ let q=search.value.toLowerCase();
  let f=allMovies.filter(m=>m.title.toLowerCase().includes(q));
- document.getElementById('rows').innerHTML=`<div class="row"><h2>نتائج البحث (${f.length})</h2><div class="slider" style="flex-wrap:wrap">${f.map((m,i)=>card(m,i)).join('')}</div></div>`;
- if(!q) render(allMovies);
+ document.getElementById('allRow').innerHTML=f.map(card).join('')||'مفيش نتائج';
 }
 load();
 </script>
